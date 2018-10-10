@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <title>Test Upload</title>
+</head>
+<body>
+    <div id="app">
+        <img v-bind:src="uploadurl" width="50px"> 
+        <form>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Upload Image</label>
+                <br>
+                <input type="file" v-on:change="getImage" class="form-control" id="file" ref="file" aria-describedby="emailHelp">
+            </div>
+            <button type="button" class="btn btn-primary" v-on:click= "uploadimage()">Upload</button>
+        </form>
+    </div>
+    <script>
+      let app = new Vue({
+        el: '#app',
+        data: {
+          imageupload: '',
+          uploadurl: ''
+        },
+        methods: {
+           uploadimage(){
+              let self = this
+              let uploaddata = new FormData()
+              uploaddata.append("imagefile", this.imageupload) // name of parameter in your server
+              console.log('Upload access----') 
+              axios.post('http://localhost:3008/uploads',
+                uploaddata
+                // ,{
+                //     headers: {
+                //         'Content-Type': 'multipart/form-data'
+                //     }
+                // }    
+              )
+                .then(uploadresult =>{
+                    self.uploadurl = uploadresult.data.link
+                    console.log('Upload Sukses---', uploadresult.data.link)
+                })
+                .catch(error=>{
+                    console.log('ERROR Upload: ---', error)
+                }) 
+           },
+           getImage(){
+              console.log('By Ref------', this.$refs.file.files) 
+              this.imageupload = this.$refs.file.files[0]  
+           }
+           // cara group project
+        //    getImage(event){
+        //        console.log('EVENT------', event.target.files)
+        //        this.imageupload = event.target.files[0]
+        //    } 
+        }
+      })
+    </script>
+</body>
+</html>
